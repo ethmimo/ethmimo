@@ -1,0 +1,33 @@
+{
+  "name": "ethmimo",
+  "version": "1.0.0",
+  "description": "JS library for Mimo",
+  "main": "Mimo.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethmimo/ethmimo.git"
+  },
+  "keywords": [
+    "identity",
+    "decentralized",
+    "web3",
+    "orbitdb",
+    "p2p",
+    "ethereum",
+    "blockchain"
+  ],
+  "author": "Ghilia Weldesselasie",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ethmimo/ethmimo/issues"
+  },
+  "homepage": "https://github.com/ethmimo/ethmimo#readme",
+  "dependencies": {
+    "ethmimo-orbit": "^1.0.1",
+    "ipfs": "^0.31.7",
+    "orbit-db": "^0.19.9"
+  }
+}
