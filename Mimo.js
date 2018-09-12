@@ -1,5 +1,6 @@
 const MimoStore = require('ethmimo-orbit');
 const Web3 = require('web3');
+const IPFS = require('ipfs');
 const OrbitDB = require('orbit-db');
 
 class Mimo {
@@ -8,21 +9,11 @@ class Mimo {
    * Instantiates Mimo
    *
    * @param     {Web3}      web3          A web3 provider instance
-   * @param     {IPFS}      ipfs          An IPFS instance, defaults to Infura node
    * @return    {Mimo}                    self
    */
-  constructor(
-    web3,
-    ipfs = { host: 'ipfs.infura.io',
-             port: 5001,
-             protocol: 'https',
-             EXPERIMENTAL: {
-               pubsub: true,
-             }
-           }
-  )
-  {
-    if(!web3) throw new Error('Web3 provider not provided')
+  constructor(web3, ipfs) {
+    if(!web3 instanceof Web3)) throw new Error('Web3 provider not provided');
+    if(!(ipfs instanceof IPFS)) throw new Error('IPFS provider not provided');
     OrbitDB.addDatabaseType(MimoStore.type, MimoStore);
     this.orbitdb = new OrbitDB(ipfs);
     this.web3 = web3;
@@ -35,6 +26,7 @@ class Mimo {
    * @return    {MimoStore}               The user instance for the given ENS name
    */
   async createProfile(name) {
+    if (!(name instanceof String)) throw new Error('name must be a string');
     await this.orbitdb.create(name, MimoStore.type, {
       web3: this.web3,
       write: [*]
@@ -48,6 +40,7 @@ class Mimo {
    * @return    {MimoStore}               The user instance for the given ENS name
    */
   async openProfile(name) {
+    if (!(name instanceof String)) throw new Error('name must be a string');
     this.web3.eth.ens.getMultihash(name).then(function (hash) {
       await orbitdb.open('/orbitdb/${hash}/${name}');
     });
@@ -60,8 +53,8 @@ class Mimo {
    * @param     {Web3Account} account      An Ethereum account
    */
   saveProfile(db, account) {
-    let name = db.address.toString().substring(55);
-    let hash = db.address.toString().substring(8, 54);
+    let name = db.address.toString().substring(56);
+    let hash = db.address.toString().substring(9, 55);
     this.web3.eth.ens.setMultihash(name, hash, { from: account });
   }
 
