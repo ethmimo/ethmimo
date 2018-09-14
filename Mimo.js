@@ -53,6 +53,7 @@ class Mimo {
    * @param     {Web3Account} account      An Ethereum account
    */
   saveProfile(db, account) {
+    if (!(db instanceof OrbitDB)) throw new Error('db must be an OrbitDB instance');
     let name = db.address.toString().substring(56);
     let hash = db.address.toString().substring(9, 55);
     this.web3.eth.ens.setMultihash(name, hash, { from: account });

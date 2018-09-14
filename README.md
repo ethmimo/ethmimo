@@ -3,7 +3,7 @@ The JS library for the Mimo protocol. Use it to build third-party apps for Mimo 
 
 ## Install
 ```sh
-npm ethmimo
+npm ethmimo web3 ipfs
 ```
 
 ## Quick Start
@@ -49,8 +49,9 @@ To learn more about DB specific methods, see the OrbitDB documentation [here](ht
 To learn more about MimoStore and `ethmimo-orbit`, see the documentation [here](https://github.com/ethmimo/mimo-orbit).
 
 ## Contributing
-Please take a look at our [contributing](CONTRIBUTING.md) guidelines if you're interested in helping!
+Please DM me on [Twitter (@ghiliweld)](https://twitter.com/ghiliweld) if you're interested in helping, my DMs are open!
 
+PRs are open too!
 
 ## License
 
