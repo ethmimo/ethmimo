@@ -8,6 +8,7 @@ npm ethmimo web3 ipfs
 
 ## Quick Start
 
+### How to setup Mimo
 ```js
 const Mimo = require('ethmimo');
 const IPFS = require('ipfs');
@@ -19,27 +20,69 @@ const web3 = new Web3();
 
 // Set up Mimo
 const mimo = new Mimo(web3, ipfs);
+```
 
+### How to create and save a profile
+```js
 // Set up a DB for an ENS name
 const alice = await mimo.createProfile('alice.mimoapp.eth');
 
-// add data to the DB
-// see ethmimo-orbit for more info on DB methods
-alice.add({bio: 'I <3 ETH!'}, 'signature');
-
-// save changes made to a DB to the blockchain
+// save the DB address to the blockchain
 mimo.saveProfile(alice, web3.eth.accounts[0]);
 
-// If a DB already exists for a profile, you can simply open it
-const bob = await mimo.openProfile('bobsburgers.eth');
+// You MUST save your profile after creating it
+```
 
+### How to open a profile
+```js
+// Set up a DB for an ENS name
+const bob = await mimo.openProfile('bobsburgers.eth');
+```
+
+### How to add data to a profile DB
+```js
+// add data to the DB
+// You must include a signature of the data by the owner of the profile
+bob.add({bio: 'I <3 ETH!'}, <signature>);
+
+// You DON'T need to save your profile after adding data
+```
+
+### How to get a profile DB's logs
+```js
 // Get all data published to a user's DB
-mimo.getHistory('bobsburgers.eth')
+await mimo.getHistory('bobsburgers.eth')
 .then(logs => console.log(logs));
 
 // You can also pass a DB object
 mimo.getHistory(alice)
 .then(logs => console.log(logs));
+```
+
+### How to get the current state of a profile
+```js
+// Get the current state of a profile
+await mimo.getState('bobsburgers.eth')
+.then(state => console.log(state));
+
+// You can also pass a DB object
+mimo.getState(alice)
+.then(state => console.log(state));
+```
+
+### Extra utils
+```js
+// Get the owner of an ENS name
+await mimo.owner('gitcoin.eth');
+// >> 0xddf369c3bf18b1b12ea295d597b943b955ef4671
+
+// Checks if an ENS name is registered/valid
+await mimo.isNameValid('gitcoin.eth');
+// >> true
+
+// Check if an unlocked account is the owner of a given ENS name
+await mimo.isAccountOwner('gitcoin.eth', web3.eth.accounts[0]);
+// >> true/false
 ```
 
 ## Documentation

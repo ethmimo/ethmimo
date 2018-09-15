@@ -42,7 +42,7 @@ class Mimo {
   async openProfile(name) {
     if (!(name instanceof String)) throw new Error('name must be a string');
     this.web3.eth.ens.getMultihash(name).then(function (hash) {
-      await orbitdb.open('/orbitdb/${hash}/${name}');
+      await orbitdb.open('/orbitdb/${hash}/${name}'); // TODO: Is .open() all that's needed
     });
   }
 
@@ -85,6 +85,69 @@ class Mimo {
       .collect()
       .map((e) => e.payload.value));
   }
+
+  /**
+   * Gets the current state of a profile
+   *
+   * @param     {String}      name           An ENS name
+   * @return    {Object}                     The current state of a profile
+   */
+  async getState(name) {
+    if (!(name instanceof String)) throw new Error('name must be a string');
+    const state = {};
+    const db = await openProfile(name);
+    const claims = db.iterator().collect();
+    claims.forEach(claim => Object.keys(claim).then(keys => keys.forEach(key => state[key] = claim)));
+    return state;
+  }
+
+  /**
+   * Gets the current state of a profile
+   *
+   * @param     {OrbitDB}     db             An OrbitDB instance
+   * @return    {Object}                     The current state of a profile
+   */
+  getState(db) {
+    if (!(db instanceof OrbitDB)) throw new Error('db must be an OrbitDB instance');
+    const state = {};
+    const claims = db.iterator().collect();
+    claims.forEach(claim => Object.keys(claim).then(keys => keys.forEach(key => state[key] = claim)));
+    return state;
+  }
+
+  /**
+   * Get the owner of an ENS name
+   *
+   * @param     {String}      name           An ENS name
+   * @return    {String}                     An Ethereum address
+   */
+  async getOwner(name) {
+    this.web3.eth.ens.registry.owner(name)
+  }
+
+  /**
+   * Checks if an ENS name is registered/valid
+   *
+   * @param     {String}      name           An ENS name
+   * @return    {Boolean}
+   */
+  async isNameValid(name) {
+    owner(name)
+    .then(owner => this.web3.utils.isAddress(owner));
+  }
+
+  /**
+   * Checks if an account owns the given ENS name
+   *
+   * @param     {String}           name           An ENS name
+   * @param     {Web3Account}      account        An Ethereum account
+   * @return    {Boolean}
+   */
+  async isAccountOwner(name, account) {
+    owner(name)
+    .then(owner => owner == account);
+  }
+
 
 }
 
