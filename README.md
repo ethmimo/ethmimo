@@ -3,7 +3,7 @@ The JS library for the Mimo protocol. Use it to build third-party apps for Mimo 
 
 ## Install
 ```sh
-npm ethmimo web3 ipfs
+npm install ethmimo web3 ipfs
 ```
 
 ## Quick Start
