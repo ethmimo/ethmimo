@@ -4,6 +4,7 @@ const IPFS = require('ipfs');
 const OrbitDB = require('orbit-db');
 
 class Mimo {
+  // TODO: remove overloading functions
 
   /**
    * Instantiates Mimo
@@ -62,57 +63,62 @@ class Mimo {
   /**
    * Get all logs in a MimoStore
    *
-   * @param     {String}     name          An OrbitDB instance
-   * @return    {Array}                    An array of JSON data
+   * @param     {String/OrbitDB}           profile        An ENS name or OrbitDB instance
+   * @return    {Array}                                   An array of JSON data
    */
-  async getHistory(name) {
-    if (!(name instanceof String)) throw new Error('name must be a string');
-    await openProfile(name).then(db =>
+  async getHistory(profile) {
+    if (!(profile instanceof String) || !(profile instanceof OrbitDB)) throw new Error('profile must be a string or OrbitDB instance');
+
+    if (profile instanceof String) {
+      await openProfile(name).then(db =>
+        db.iterator()
+        .collect()
+        .map((e) => e.payload.value));
+    }
+
+    if (profile instanceof OrbitDB) {
       db.iterator()
-      .collect()
-      .map((e) => e.payload.value));
-  }
-
-  /**
-   * Get all logs in a MimoStore
-   *
-   * @param     {OrbitDB}     db           An OrbitDB instance
-   * @return    {Array}                    An array of JSON data
-   */
-  getHistory(db) {
-    if (!(db instanceof OrbitDB)) throw new Error('db must be an OrbitDB instance');
-    db.iterator()
-      .collect()
-      .map((e) => e.payload.value));
+        .collect()
+        .map((e) => e.payload.value));
+    }
   }
 
   /**
    * Gets the current state of a profile
    *
-   * @param     {String}      name           An ENS name
-   * @return    {Object}                     The current state of a profile
+   * @param     {String/OrbitDB}           profile        An ENS name or OrbitDB instance
+   * @param     {StringArray}              filter         An array of values we are filtering for
+   * @return    {Object}                                  The current state of a profile
    */
-  async getState(name) {
-    if (!(name instanceof String)) throw new Error('name must be a string');
+  async getState(profile, filters = []) {
+    if (!(profile instanceof String) || !(profile instanceof OrbitDB)) throw new Error('profile must be a string or OrbitDB instance');
+    if (filters.find(filter => !(filter instanceof String)) == undefined) throw new Error('all filters must be strings');
     const state = {};
-    const db = await openProfile(name);
-    const claims = db.iterator().collect();
-    claims.forEach(claim => Object.keys(claim).then(keys => keys.forEach(key => state[key] = claim)));
+    filters.forEach(filter => await getCurrentValue(profile, filter).then(value => state[filter] = value));
     return state;
   }
 
   /**
    * Gets the current state of a profile
    *
-   * @param     {OrbitDB}     db             An OrbitDB instance
-   * @return    {Object}                     The current state of a profile
+   * @param     {String/OrbitDB}      profile        An ENS name or OrbitDB instance
+   * @param     {String}              filter         The property we are filtering for
+   * @return    {Object}                             The current state of a profile
    */
-  getState(db) {
-    if (!(db instanceof OrbitDB)) throw new Error('db must be an OrbitDB instance');
-    const state = {};
-    const claims = db.iterator().collect();
-    claims.forEach(claim => Object.keys(claim).then(keys => keys.forEach(key => state[key] = claim)));
-    return state;
+  async getCurrentValue(profile, filter) {
+    if (!(profile instanceof String) || !(profile instanceof OrbitDB)) throw new Error('profile must be a string or OrbitDB instance');
+    if (!(filter instanceof String)) throw new Error('filter must be a string');
+
+    if (profile instanceof String) {
+      const db = await openProfile(profile);
+      const claims = db.iterator({ reverse: true }).collect();
+      claims.find(claim => claim.hasOwnProperty(filter));
+    }
+
+    if (profile instanceof OrbitDB) {
+      const claims = profile.iterator({ reverse: true }).collect();
+      claims.find(claim => claim.hasOwnProperty(filter));
+    }
   }
 
   /**

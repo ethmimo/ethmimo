@@ -3,7 +3,7 @@ The JS library for the Mimo protocol. Use it to build third-party apps for Mimo 
 
 ## Install
 ```sh
-npm ethmimo web3 ipfs
+npm install ethmimo web3 ipfs
 ```
 
 ## Quick Start
@@ -61,12 +61,21 @@ mimo.getHistory(alice)
 
 ### How to get the current state of a profile
 ```js
+// Get a specific property of a profile
+await mimo.getCurrentValue('bobsburgers.eth', 'bio')
+.then(res => console.log(res));
+
+// works with DB object
+await mimo.getCurrentValue(alice, 'bio')
+.then(res => console.log(res));
+
 // Get the current state of a profile
-await mimo.getState('bobsburgers.eth')
+// You can either retrieve any particular properties you want
+await mimo.getState('bobsburgers.eth', ['bio'])
 .then(state => console.log(state));
 
 // You can also pass a DB object
-mimo.getState(alice)
+mimo.getState(alice, ['picture', 'bio'])
 .then(state => console.log(state));
 ```
 
