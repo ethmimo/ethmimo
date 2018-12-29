@@ -28,6 +28,7 @@
   "dependencies": {
     "ethmimo-orbit": "^1.0.1",
     "ipfs": "^0.31.7",
-    "orbit-db": "^0.19.9"
+    "orbit-db": "^0.19.9",
+    "web3-emojihash": "^1.0.1"
   }
 }
