@@ -3,12 +3,11 @@ const loadDB = require('./db.js');
 
 class Mimo {
 
-  // TODO: async constructor???
-  constructor(ipfs) {
-    this.db = loadDB(ipfs).then(db => getDB(db)).catch(e => console.log(e));
+  constructor(db) {
+    this.db = db;
   }
 
-  address() {
+  get address() {
     return this.db.address.toString();
   }
 
@@ -42,13 +41,6 @@ class Mimo {
     return await getProfile(owner);
   }
 
-  // static async getMutualFollows(db, id1, id2) {
-  //   const first = await getProfile(db, id1);
-  //   const second = await getProfile(db, id2);
-  //   const mutuals = first.following.filter(f => second.following.includes(f));
-  //   return await getProfiles(db, mutuals);
-  // }
-
   async updateProfile(signature, data) {
     try {
       const { id } = await this.db.put(signature, data);
@@ -59,10 +51,12 @@ class Mimo {
     }
   }
 
-  static getDB(db) {
-    return db;
-  }
-
 }
 
-module.exports = Mimo;
+const initMimo = async ipfs => {
+  const db = await loadDB(ipfs);
+  const mimo = new Mimo(db);
+  return mimo;
+}
+
+module.exports = { Mimo, initMimo };

@@ -1,5 +1,5 @@
 const OrbitDB = require('orbit-db');
-const MimoStore = require('./MimoStore.js');
+const MimoStore = require('mimostore');
 
 const loadDB = async (ipfs) => {
 
@@ -10,7 +10,7 @@ const loadDB = async (ipfs) => {
   OrbitDB.addDatabaseType(MimoStore.type, MimoStore);
 
   // create an OrbitDB instance
-  orbitdb = new OrbitDB(ipfs, './orbit/mimo' + Date.now());
+  orbitdb = new OrbitDB(ipfs, './orbit/mimo');
 
   // create a MimoStore instance
   db = await orbitdb.create('mimo', MimoStore.type, { write: ['*'] });

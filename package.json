@@ -1,6 +1,6 @@
 {
   "name": "ethmimo",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "JS library for Mimo",
   "main": "Mimo.js",
   "scripts": {
@@ -26,8 +26,8 @@
   },
   "homepage": "https://github.com/ethmimo/ethmimo#readme",
   "dependencies": {
-    "ethmimo-orbit": "^1.0.1",
     "ipfs": "^0.31.7",
+    "mimostore": "^0.1.0",
     "orbit-db": "^0.19.9",
     "web3-emojihash": "^1.0.1"
   }
