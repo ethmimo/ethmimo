@@ -5,41 +5,41 @@ class Mimo {
 
   // TODO: async constructor???
   constructor(ipfs) {
-    this.db = this.initDB(ipfs);
+    this.db = loadDB(ipfs).then(db => getDB(db)).catch(e => console.log(e));
   }
 
-  static address(db) {
+  address() {
     return this.db.address.toString();
   }
 
-  static async getAllProfiles(db) {
+  async getAllProfiles() {
     return this.db.all();
   }
 
-  static async getProfile(db, id) {
+  async getProfile( id) {
     return this.db.get(id);
   }
 
-  static async getProfiles(db, ids) {
+  async getProfiles(ids) {
     const profiles = ids.map(async id => await this.getProfile(db, id));
     return profiles;
   }
 
-  static async getProfilesByName(db, name) {
-    return this.getAllProfiles(db).filter(profile => profile.name = name);
+  async getProfilesByName(name) {
+    return this.getAllProfiles().filter(profile => profile.name = name);
   }
 
-  static async getProfileByEmoji(db, emojis) {
-    return this.getAllProfiles(db).find(profile => emojihash(profile.id) = emojis);
+  async getProfileByEmoji(emojis) {
+    return this.getAllProfiles().find(profile => emojihash(profile.id) = emojis);
   }
 
-  static async isNameRegistered(db, name) {
-    return this.getProfilesByName(db, name).length > 0;
+  static async isNameRegistered(name) {
+    return this.getProfilesByName(name).length > 0;
   }
 
-  static async resolveENSName(db, web3, ensname) {
+  async resolveENSName(web3, ensname) {
     const owner = web3.eth.ens.registry.owner(ensname);
-    return await getProfile(db, owner);
+    return await getProfile(owner);
   }
 
   // static async getMutualFollows(db, id1, id2) {
@@ -49,7 +49,7 @@ class Mimo {
   //   return await getProfiles(db, mutuals);
   // }
 
-  static async updateProfile(db, signature, data) {
+  async updateProfile(signature, data) {
     try {
       const { id } = await this.db.put(signature, data);
       return await this.db.get(id);
@@ -59,13 +59,8 @@ class Mimo {
     }
   }
 
-  static async initDB(ipfs) {
-    try {
-      return await loadDB(ipfs);
-    }
-    catch(e) {
-      throw new Error(e);
-    }
+  static getDB(db) {
+    return db;
   }
 
 }
